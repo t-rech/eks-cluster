@@ -31,7 +31,6 @@ variable "map_users" {
 
   default = [
     {
-
       username = "rodrigo_rech"
       groups   = ["system:masters"]
     },

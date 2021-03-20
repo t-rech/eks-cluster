@@ -17,4 +17,4 @@ setup-argocd:
 	kubectl create namespace argocd && kubectl apply -n argocd -f argocd/
 
 access-argocd:
-	kubectl port-forward svc/argocd-server -n argocd 8080:443
+	bash scripts/argocd_connect.sh

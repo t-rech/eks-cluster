@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cluster-autoscaler
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: 'https://kubernetes.github.io/autoscaler'
+    targetRevision: 9.9.0
+    helm:
+      parameters:
+        - name: autoDiscovery.clusterName
+          value: eks-cluster
+        - name: 'autoDiscovery.tags[0][1]'
+          value: k8s.io/cluster-autoscaler/eks-cluster
+        - name: image.tag
+          value: v1.19.1
+    chart: cluster-autoscaler
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: kube-system

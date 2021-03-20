@@ -19,7 +19,7 @@ provider "kubernetes" {
 }
 
 module "eks" {
-  source          = "terraform-aws-modules/eks/aws"
+  source  = "terraform-aws-modules/eks/aws"
   version = "14.0.0"
 
   cluster_name    = local.cluster_name
@@ -38,32 +38,20 @@ module "eks" {
   }
 
   node_groups = {
-    example = {
-      desired_capacity = 1
+    work_nodes = {
       max_capacity     = 3
       min_capacity     = 1
 
-      instance_types = ["t3.small"]
+      instance_types = ["t3.medium"]
       k8s_labels = {
         Environment = var.environment
       }
+      additional_tags = {
+        "k8s.io/cluster-autoscaler/${local.cluster_name}" = "owned",
+        "k8s.io/cluster-autoscaler/enabled" = "TRUE"
+      }
     }
   }
-
-  # Create security group rules to allow communication between pods on workers and pods in managed node groups.
-  # Set this to true if you have AWS-Managed node groups and Self-Managed worker groups.
-  # See https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1089
-
-  # worker_create_cluster_primary_security_group_rules = true
-
-  # worker_groups_launch_template = [
-  #   {
-  #     name                 = "worker-group-1"
-  #     instance_type        = "t3.small"
-  #     asg_desired_capacity = 2
-  #     public_ip            = true
-  #   }
-  # ]
 
   #   map_roles    = var.map_roles
   map_users = var.map_users
