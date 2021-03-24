@@ -88,9 +88,36 @@ spec:
   source:
     chart: vault
     helm:
-      parameters:
-      - name: server.ha.enabled
-        value: "true"
+      values: |
+        server:
+          ha:
+            enabled: "true"
+            config: |
+              ui = true
+              listener "tcp" {
+                tls_disable = 1
+                address = "[::]:8200"
+                cluster_address = "[::]:8201"
+              }
+              storage "dynamodb" {
+                ha_enabled = "true"
+                region = "us-east-1"
+                table = "vault-eks-cluster"
+              }
+              seal "awskms" {
+                region = "us-east-1"
+              }
+              service_registration "kubernetes" {}
+          extraSecretEnvironmentVars:
+           - envName: AWS_SECRET_ACCESS_KEY
+             secretName: vault-aws-service-account-user
+             secretKey: AWS_SECRET_ACCESS_KEY
+           - envName: AWS_ACCESS_KEY_ID
+             secretName: vault-aws-service-account-user
+             secretKey: AWS_ACCESS_KEY_ID
+           - envName: VAULT_AWSKMS_SEAL_KEY_ID
+             secretName: vault-aws-service-account-user
+             secretKey: VAULT_AWSKMS_SEAL_KEY_ID
     repoURL: https://helm.releases.hashicorp.com
     targetRevision: 0.9.1
   syncPolicy:
