@@ -1,6 +1,5 @@
 resource "aws_kms_key" "vault" {
   description             = "${local.vault_name} KMS"
-  deletion_window_in_days = 10
 }
 
 locals {
@@ -28,49 +27,51 @@ resource "aws_dynamodb_table" "vault_table" {
   }
 }
 
+data "aws_iam_policy_document" "vault_table_access" {
+  statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["${aws_dynamodb_table.vault_table.arn}"]
+
+    actions = [
+      "dynamodb:DescribeLimits",
+      "dynamodb:DescribeTimeToLive",
+      "dynamodb:ListTagsOfResource",
+      "dynamodb:DescribeReservedCapacityOfferings",
+      "dynamodb:DescribeReservedCapacity",
+      "dynamodb:ListTables",
+      "dynamodb:BatchGetItem",
+      "dynamodb:BatchWriteItem",
+      "dynamodb:CreateTable",
+      "dynamodb:DeleteItem",
+      "dynamodb:GetItem",
+      "dynamodb:GetRecords",
+      "dynamodb:PutItem",
+      "dynamodb:Query",
+      "dynamodb:UpdateItem",
+      "dynamodb:Scan",
+      "dynamodb:DescribeTable",
+    ]
+  }
+
+  statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["${aws_kms_key.vault.arn}"]
+
+    actions = [
+      "kms:Decrypt",
+      "kms:DescribeKey",
+      "kms:Encrypt",
+    ]
+  }
+}
+
 resource "aws_iam_policy" "vault_table_access" {
   name        = "${local.vault_name}-dynamodb-access"
   description = "This gives the ability to connect to Vault's DynamoDB table"
 
-  policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "dynamodb:DescribeLimits",
-        "dynamodb:DescribeTimeToLive",
-        "dynamodb:ListTagsOfResource",
-        "dynamodb:DescribeReservedCapacityOfferings",
-        "dynamodb:DescribeReservedCapacity",
-        "dynamodb:ListTables",
-        "dynamodb:BatchGetItem",
-        "dynamodb:BatchWriteItem",
-        "dynamodb:CreateTable",
-        "dynamodb:DeleteItem",
-        "dynamodb:GetItem",
-        "dynamodb:GetRecords",
-        "dynamodb:PutItem",
-        "dynamodb:Query",
-        "dynamodb:UpdateItem",
-        "dynamodb:Scan",
-        "dynamodb:DescribeTable"
-      ],
-      "Resource": ["${aws_dynamodb_table.vault_table.arn}"]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "kms:Decrypt",
-        "kms:DescribeKey",
-        "kms:Encrypt"
-      ],
-      "Resource": "${aws_kms_key.vault.arn}"
-    }
-  ]
-}
-POLICY
+  policy = data.aws_iam_policy_document.vault_table_access.json
 }
 
 # resource "aws_iam_role_policy_attachment" "k8s_workers_nodes" {
@@ -78,46 +79,17 @@ POLICY
 #   policy_arn = "${aws_iam_policy.vault_table_access.arn}"
 # }
 
-resource "aws_iam_user" "aws_secret_engine" {
+resource "aws_iam_user" "vault_service_account" {
   name = "${local.vault_name}-service-account"
 }
 
+resource "aws_iam_user_policy_attachment" "vault_policy_attachment" {
+  user       = aws_iam_user.vault_service_account.name
+  policy_arn = aws_iam_policy.vault_table_access.arn
+}
+
 resource "aws_iam_access_key" "vault_access_key" {
-  user = aws_iam_user.aws_secret_engine.name
+  user = aws_iam_user.vault_service_account.name
 }
 
 data "aws_caller_identity" "current" {}
-
-resource "aws_iam_user_policy" "aws_secret_engine" {
-  name = "${local.vault_name}-aws-secret-engine"
-  user = aws_iam_user.aws_secret_engine.name
-
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "iam:AttachUserPolicy",
-        "iam:CreateAccessKey",
-        "iam:CreateUser",
-        "iam:DeleteAccessKey",
-        "iam:DeleteUser",
-        "iam:DeleteUserPolicy",
-        "iam:DetachUserPolicy",
-        "iam:ListAccessKeys",
-        "iam:ListAttachedUserPolicies",
-        "iam:ListGroupsForUser",
-        "iam:ListUserPolicies",
-        "iam:PutUserPolicy",
-        "iam:RemoveUserFromGroup"
-      ],
-      "Resource": [
-        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/vault-*"
-      ]
-    }
-  ]
-}
-EOF
-}

@@ -14,14 +14,15 @@ provider "kubernetes" {
   version                = "~> 1.11"
 }
 
-resource "kubernetes_secret" "example" {
+resource "kubernetes_secret" "vault_secret" {
   metadata {
-    name = "vault-creds"
+    name = "vault-aws-service-account-user"
     namespace = "vault"
   }
 
   data = {
-    AWS_SECRET_ACCESS_KEY = aws_iam_access_key.vault_access_key.id
-    AWS_ACCESS_KEY_ID = aws_iam_access_key.vault_access_key.secret
+    AWS_SECRET_ACCESS_KEY = aws_iam_access_key.vault_access_key.secret
+    AWS_ACCESS_KEY_ID = aws_iam_access_key.vault_access_key.id
+    VAULT_AWSKMS_SEAL_KEY_ID = aws_kms_key.vault.key_id
   }
 }

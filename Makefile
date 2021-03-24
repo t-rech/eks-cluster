@@ -1,14 +1,11 @@
-init:
-	cd cluster/ && terraform init
-
 plan:
-	cd cluster/ && terraform plan -var-file=environments/nonprod.tfvars
+	cd terragrunt/nonprod && terragrunt run-all plan
 
 apply:
-	cd cluster/ && terraform apply -auto-approve -var-file=environments/nonprod.tfvars
+	cd terragrunt/nonprod && terragrunt run-all apply
 
 destroy:
-	cd cluster/ && terraform destroy -auto-approve -var-file=environments/nonprod.tfvars
+	cd terragrunt/nonprod && terragrunt run-all destroy
 
 update-kubeconfig:
 	aws eks update-kubeconfig --name eks-cluster --alias eks-cluster
