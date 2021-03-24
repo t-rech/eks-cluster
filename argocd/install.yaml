@@ -2594,6 +2594,7 @@ spec:
       - emptyDir: {}
         name: gpg-keyring
 ---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
