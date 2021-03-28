@@ -2629,6 +2629,7 @@ spec:
       containers:
       - command:
         - argocd-server
+        - --insecure
         - --staticassets
         - /shared/app
         image: argoproj/argocd:v1.8.7

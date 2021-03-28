@@ -1,0 +1,26 @@
+# Default values for lets-encrypt-issuer.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+certificate:
+  name: acme-ca
+  namespace: istio-system
+  secretName: acme-ca-tls
+  organizations:
+    - rech.app
+  dnsNames:
+    - "*.rech.app"
+
+clusterIssuer:
+  name: acme-ca-issuer
+  email: rodrigohrech@gmail.com
+  server: https://acme-staging-v02.api.letsencrypt.org/directory
+  privateKeySecretRef: letencrypt-private-key
+  dnsZones:
+    - "rech.app"
+  route53:
+    region: us-east-1
+    accessKeyID: XXXXXXXXXXXXX
+    secretAccessKeySecretRef:
+      name: route53-credentials-secret
+      key: secret-access-key
