@@ -1,14 +1,14 @@
-# terragrunt/nonprod/acme/terragrunt.hcl
+# terragrunt/nonprod/istio/terragrunt.hcl
 terraform {
-  source = "../../../acme"
+  source = "../../../istio"
 }
 terraform_version_constraint = "= 0.12.30"
 
 inputs = {
-    region = "us-east-1"
     cluster_name = "eks-cluster"
+    region = "us-east-1"
 }
 
 dependencies {
-  paths = ["../istio"]
+  paths = ["../eks"]
 }

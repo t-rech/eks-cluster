@@ -7,8 +7,14 @@ apply:
 destroy:
 	cd terragrunt/nonprod && terragrunt run-all destroy
 
+init.%:
+	cd terragrunt/nonprod/$* && terragrunt init
+
 apply.%:
-	cd terragrunt/nonprod/$* && terragrunt apply
+	cd terragrunt/nonprod/$* && terragrunt apply -auto-approve
+
+destroy.%:
+	cd terragrunt/nonprod/$* && terragrunt destroy -auto-approve
 
 update-kubeconfig:
 	aws eks update-kubeconfig --name eks-cluster --alias eks-cluster
