@@ -29,3 +29,7 @@ argocd-default-password:
 	kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2
 
 me-happy: apply update-kubeconfig install-istio setup-argocd
+
+.PHONY: ingress-pod
+ingress-pod:
+	@echo $(shell kubectl get pod -l service.istio.io/canonical-name=public-ingressgateway -o jsonpath={.items..metadata.name} -n istio-system)

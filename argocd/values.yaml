@@ -517,8 +517,8 @@ server:
     oidc.config: |
       name: Auth0
       issuer: https://rech-app.us.auth0.com/
-      clientID: $auth0.clientID
-      clientSecret: $auth0.clientSecret
+      clientID: $oidc.auth0.clientID
+      clientSecret: $oidc.auth0.clientSecret
       requestedScopes:
       - openid
       - profile

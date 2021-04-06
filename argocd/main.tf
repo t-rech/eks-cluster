@@ -23,3 +23,26 @@ resource "helm_release" "argocd" {
 
   depends_on = [kubernetes_namespace.argocd]
 }
+
+resource "helm_release" "istio_vs_gateway" {
+  name  = "argo-cd-istio"
+  chart = "./charts/istio-vs-gw"
+
+  namespace = "argocd"
+
+  force_update = true
+
+  set {
+    name  = "tls.credentialName"
+    value = "acme-ca-tls"
+  }
+
+  set {
+    name  = "host"
+    value = "${var.service_subdomain}.${var.hosted_zone}"
+  }
+
+  depends_on = [
+    helm_release.argocd
+  ]
+}

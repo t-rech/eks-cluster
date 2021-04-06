@@ -41,12 +41,6 @@ resource "helm_release" "ca_issuer" {
     name  = "clusterIssuer.route53.accessKeyID"
     value = aws_iam_access_key.cert_manager_access_key.id
   }
-
-  set {
-    name  = "clusterIssuer.server"
-    value = "https://acme-v02.api.letsencrypt.org/directory"
-  }
-
   set {
     name  = "clusterIssuer.route53.secretAccessKeySecretRef.name"
     value = "cert-manager-aws-service-account-user"

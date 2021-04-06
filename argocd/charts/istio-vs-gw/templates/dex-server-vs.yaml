@@ -1,0 +1,13 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: argo-cd-dex-server-vs
+spec:
+  hosts:
+  - argo-cd-argocd-dex-server
+  gateways:
+  - mesh
+  http:
+  - route:
+    - destination:
+        host: argo-cd-argocd-dex-server.{{ .Release.Namespace }}.svc.cluster.local

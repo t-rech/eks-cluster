@@ -1,0 +1,1 @@
+aws eks update-kubeconfig --name eks-cluster --alias eks-cluster
