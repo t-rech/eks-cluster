@@ -1,6 +1,6 @@
 # terragrunt/nonprod/eks/terragrunt.hcl
 terraform {
-  source = "../../../eks"
+  source = "../../../modules/eks"
 
   after_hook "after_hook" {
     commands     = ["apply"]

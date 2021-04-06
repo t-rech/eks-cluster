@@ -1,6 +1,6 @@
 # terragrunt/nonprod/vault/terragrunt.hcl
 terraform {
-  source = "../../../vault/infrastructure"
+  source = "../../../modules/vault/infrastructure"
 }
 terraform_version_constraint = "= 0.12.30"
 

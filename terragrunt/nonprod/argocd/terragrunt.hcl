@@ -1,6 +1,6 @@
 # terragrunt/nonprod/argocd/terragrunt.hcl
 terraform {
-  source = "../../../argocd"
+  source = "../../../modules/argocd"
 }
 terraform_version_constraint = "= 0.12.30"
 

@@ -1,6 +1,6 @@
 # terragrunt/nonprod/istio/terragrunt.hcl
 terraform {
-  source = "../../../istio"
+  source = "../../../modules/istio"
 }
 terraform_version_constraint = "= 0.12.30"
 

@@ -1,6 +1,6 @@
 # terragrunt/nonprod/acme/terragrunt.hcl
 terraform {
-  source = "../../../acme"
+  source = "../../../modules/acme"
 }
 terraform_version_constraint = "= 0.12.30"
 
