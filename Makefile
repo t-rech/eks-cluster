@@ -13,6 +13,9 @@ init.%:
 apply.%:
 	cd terragrunt/nonprod/$* && terragrunt apply -auto-approve
 
+plan.%:
+	cd terragrunt/nonprod/$* && terragrunt plan
+
 destroy.%:
 	cd terragrunt/nonprod/$* && terragrunt destroy -auto-approve
 
