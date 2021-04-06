@@ -13,4 +13,5 @@ terraform_version_constraint = "= 0.12.30"
 inputs = {
     environment = "nonprod"
     region = "us-east-1"
+    cluster_name = "eks-cluster"
 }

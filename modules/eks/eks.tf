@@ -6,10 +6,6 @@ data "aws_eks_cluster_auth" "cluster" {
   name = module.eks.cluster_id
 }
 
-locals {
-  cluster_name = "eks-cluster"
-}
-
 provider "kubernetes" {
   host                   = data.aws_eks_cluster.cluster.endpoint
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
@@ -22,7 +18,7 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "14.0.0"
 
-  cluster_name    = local.cluster_name
+  cluster_name    = var.cluster_name
   cluster_version = "1.19"
   subnets         = module.vpc.private_subnets
 
@@ -47,7 +43,7 @@ module "eks" {
         Environment = var.environment
       }
       additional_tags = {
-        "k8s.io/cluster-autoscaler/${local.cluster_name}" = "owned",
+        "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned",
         "k8s.io/cluster-autoscaler/enabled" = "TRUE"
       }
     }

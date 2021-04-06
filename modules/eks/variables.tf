@@ -37,3 +37,6 @@ variable "map_users" {
     },
   ]
 }
+
+variable "cluster_name" {
+}
